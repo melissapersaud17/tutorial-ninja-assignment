@@ -1,6 +1,7 @@
 package com.tutorialninja.steps;
 
 import com.tutorialninja.config.Hooks;
+import com.tutorialninja.config.SharedContext;
 import com.tutorialninja.forms.GenericFormWrapper;
 import com.tutorialninja.forms.RegistrationForm;
 import com.tutorialninja.pages.AccountSuccessPage;
@@ -10,6 +11,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import org.openqa.selenium.WebDriver;
+import io.cucumber.datatable.DataTable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,37 +25,56 @@ public class RegistrationSteps {
     private GenericFormWrapper<RegistrationForm> registrationWrapper;
     private HomePage homePage;
     private AccountSuccessPage accountSuccessPage;
+    private Map<String, String> lastFormData;
 
-    // Field-level validators only
     private final List<FieldValidator> fieldValidators = List.of(
-            new FirstNameValidator(),
-            new LastNameValidator(),
+            new LengthBoundValidator("firstName", "First Name", 1, 32, LengthBoundValidator.ViolationType.ABOVE_MAX),
+            new LengthBoundValidator("lastName", "Last Name", 1, 32, LengthBoundValidator.ViolationType.ABOVE_MAX),
             new EmailValidator(),
-            new TelephoneValidator(),
-            new PasswordValidator()
+            new LengthBoundValidator("telephone", "Telephone", 3, 32, LengthBoundValidator.ViolationType.ABOVE_MAX),
+            new LengthBoundValidator("password", "Password", 4, 20, LengthBoundValidator.ViolationType.BELOW_MIN)
     );
+
+    @Given("I have registered a new account")
+    public void iHaveRegisteredANewAccount() {
+        homePage = new HomePage(driver);
+        registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());
+        accountSuccessPage = new AccountSuccessPage(driver);
+        homePage.navigateToRegistration();
+
+        String email = "testuser_" + System.currentTimeMillis() + "@test.com";
+        String password = "Test1234";
+        SharedContext.setCredentials(email, password);
+
+        registrationWrapper.fillAllFields(Map.of(
+                "firstName", "John",
+                "lastName", "Doe",
+                "email", email,
+                "telephone", "1234567890",
+                "password", password,
+                "passwordConfirm", password
+        ));
+        registrationWrapper.click(registrationWrapper.getForm().getPrivacyPolicyCheckbox());
+        registrationWrapper.submit();
+        driver.manage().deleteAllCookies();
+    }
 
     @Given("I am on the registration page")
     public void iAmOnTheRegistrationPage() {
         homePage = new HomePage(driver);
         registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());
         accountSuccessPage = new AccountSuccessPage(driver);
-        homePage.navigateTo();
-        homePage.clickRegister();
+        homePage.navigateToRegistration();
     }
 
-    @When("I fill out the registration form with valid data")
-    public void iFillOutTheRegistrationFormWithValidData() {
-        String uniqueEmail = "testuser_" + System.currentTimeMillis() + "@test.com";
-
-        registrationWrapper.fillAllFields(Map.of(
-                "firstName", "John",
-                "lastName", "Doe",
-                "email", uniqueEmail,
-                "telephone", "1234567890",
-                "password", "Test1234",
-                "passwordConfirm", "Test1234"
-        ));
+    @When("I fill out the registration form with the following details:")
+    public void iFillOutTheRegistrationFormWithTheFollowingDetails(DataTable dataTable) {
+        Map<String, String> data = new HashMap<>(dataTable.asMap());
+        if ("<generated>".equals(data.get("email"))) {
+            data.put("email", "testuser_" + System.currentTimeMillis() + "@test.com");
+        }
+        lastFormData = data;
+        registrationWrapper.fillAllFields(data);
     }
 
     @When("I agree to the privacy policy")
@@ -65,15 +87,42 @@ public class RegistrationSteps {
         registrationWrapper.submit();
     }
 
+    @When("I register again with the same details")
+    public void iRegisterAgainWithTheSameDetails() {
+        driver.manage().deleteAllCookies();
+        homePage.navigateToRegistration();
+        registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());
+        registrationWrapper.fillAllFields(lastFormData);
+        registrationWrapper.click(registrationWrapper.getForm().getPrivacyPolicyCheckbox());
+        registrationWrapper.submit();
+    }
+
+    @Then("I should see the duplicate email warning")
+    public void iShouldSeeTheDuplicateEmailWarning() {
+        String expected = "Warning: E-Mail Address is already registered!";
+        String actual = registrationWrapper.getText(registrationWrapper.getForm().getPageWarning());
+        assertTrue(actual.contains(expected),
+                "Expected duplicate email warning: " + expected + " but got: " + actual);
+    }
+
     @Then("I should see the account created confirmation page")
     public void iShouldSeeTheAccountCreatedConfirmationPage() {
         assertTrue(accountSuccessPage.isAccountCreated(),
                 "Expected 'Your Account Has Been Created!' but got: "
                         + accountSuccessPage.getHeadingText());
+        assertTrue(accountSuccessPage.isOnSuccessPage(),
+                "Expected URL to contain 'route=account/success' but got: "
+                        + accountSuccessPage.getCurrentUrl());
     }
 
     @When("I submit the empty registration form")
     public void iSubmitTheEmptyRegistrationForm() {
+        registrationWrapper.submit();
+    }
+
+    @When("I submit the form with each field's invalid value")
+    public void iSubmitTheFormWithEachFieldsInvalidValue() {
+        fieldValidators.forEach(v -> registrationWrapper.fillField(v.getFieldName(), v.getInvalidValue()));
         registrationWrapper.submit();
     }
 
@@ -102,12 +151,6 @@ public class RegistrationSteps {
 
         assertTrue(actual.contains(expected),
                 "Expected page warning: " + expected + " but got: " + actual);
-    }
-
-    @When("I enter mismatched passwords")
-    public void iEnterMismatchedPasswords() {
-        registrationWrapper.fillField("password", "Test1234");
-        registrationWrapper.fillField("passwordConfirm", "DifferentPassword");
     }
 
     @Then("I should see the password confirmation error message")

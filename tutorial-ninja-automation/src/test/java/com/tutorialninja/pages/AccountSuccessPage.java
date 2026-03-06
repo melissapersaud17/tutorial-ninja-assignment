@@ -18,4 +18,12 @@ public class AccountSuccessPage extends BasePage {
     public boolean isAccountCreated() {
         return getHeadingText().contains("Your Account Has Been Created!");
     }
+
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
+    }
+
+    public boolean isOnSuccessPage() {
+        return getCurrentUrl().contains("route=account/success");
+    }
 }

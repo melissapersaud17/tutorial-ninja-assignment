@@ -5,10 +5,10 @@ plugins {
 group = 'com.tutorialninja'
 version = '1.0-SNAPSHOT'
 
-// tells Gradle to compile with Java 17
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }
 
 repositories {
@@ -29,9 +29,6 @@ dependencies {
     // JUnit 5 Platform — needed to run Cucumber tests
     testImplementation 'org.junit.platform:junit-platform-suite:1.11.3'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-
-//    testImplementation platform('org.junit:junit-bom:5.9.1')
-//    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {

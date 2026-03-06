@@ -13,7 +13,7 @@ public abstract class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
 
-    private static final int SLOW_DOWN_MS = 0;
+    private static final int SLOW_DOWN_MS = 1000;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;

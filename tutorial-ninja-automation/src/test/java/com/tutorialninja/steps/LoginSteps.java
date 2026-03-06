@@ -1,6 +1,7 @@
 package com.tutorialninja.steps;
 
 import com.tutorialninja.config.Hooks;
+import com.tutorialninja.config.SharedContext;
 import com.tutorialninja.forms.GenericFormWrapper;
 import com.tutorialninja.forms.LoginForm;
 import com.tutorialninja.pages.HomePage;
@@ -26,15 +27,14 @@ public class LoginSteps {
         HomePage homePage = new HomePage(driver);
         loginWrapper = new GenericFormWrapper<>(driver, new LoginForm());
         myAccountPage = new MyAccountPage(driver);
-        homePage.navigateTo();
-        homePage.clickLogin();
+        homePage.navigateToLoginPage();
     }
 
-    @When("I enter valid credentials")
-    public void iEnterValidCredentials() {
+    @When("I log in with the registered credentials")
+    public void iLogInWithTheRegisteredCredentials() {
         loginWrapper.fillAllFields(Map.of(
-                "email", "testuser_0304@example.com",
-                "password", "Test1234"
+                "email", SharedContext.getRegisteredEmail(),
+                "password", SharedContext.getRegisteredPassword()
         ));
     }
 

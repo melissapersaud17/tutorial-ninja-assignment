@@ -1,6 +1,7 @@
 package com.tutorialninja.forms;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -28,6 +29,7 @@ public class GenericFormWrapper<F extends FormPage> {
     public void fillField(String fieldName, String value) {
         By locator = form.getFields().get(fieldName);
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('maxlength')", element);
         element.clear();
         element.sendKeys(value);
     }

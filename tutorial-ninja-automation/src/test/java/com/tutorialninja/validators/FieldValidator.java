@@ -7,7 +7,11 @@ public interface FieldValidator {
 
     String getFieldName();
 
+    String getInvalidValue();
+
     String getExpectedError();
 
-    String getActualError(GenericFormWrapper<RegistrationForm> wrapper);
+    default String getActualError(GenericFormWrapper<RegistrationForm> wrapper) {
+        return wrapper.getText(wrapper.getForm().getErrors().get(getFieldName()));
+    }
 }
