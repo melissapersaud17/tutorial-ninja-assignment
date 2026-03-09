@@ -21,5 +21,6 @@ public class LoginForm implements FormPage {
 
     @Override
     public By getSubmitButton()         { return submitButton; }
+    @Override
     public By getPageWarning()          { return pageWarning; }
 }

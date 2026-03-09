@@ -37,7 +37,9 @@ public class RegistrationForm implements FormPage {
     @Override
     public By getSubmitButton()             { return submitButton; }
 
+    @Override
     public Map<String, By> getErrors()      { return errors; }
     public By getPrivacyPolicyCheckbox()    { return privacyPolicyCheckbox; }
+    @Override
     public By getPageWarning()              { return pageWarning; }
 }
