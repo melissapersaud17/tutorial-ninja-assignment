@@ -5,7 +5,6 @@ import io.cucumber.java.Before;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.time.Duration;
 
 public class Hooks {
 
@@ -20,7 +19,6 @@ public class Hooks {
         WebDriverManager.chromedriver().setup();
         ChromeDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         context.setDriver(driver);
     }
 
