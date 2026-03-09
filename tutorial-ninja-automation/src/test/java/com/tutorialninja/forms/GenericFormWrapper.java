@@ -27,9 +27,15 @@ public class GenericFormWrapper<F extends FormPage> {
     }
 
     public void fillField(String fieldName, String value) {
+        fillField(fieldName, value, false);
+    }
+
+    public void fillField(String fieldName, String value, boolean removeMaxLength) {
         By locator = form.getFields().get(fieldName);
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('maxlength')", element);
+        if (removeMaxLength) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('maxlength')", element);
+        }
         element.clear();
         element.sendKeys(value);
     }

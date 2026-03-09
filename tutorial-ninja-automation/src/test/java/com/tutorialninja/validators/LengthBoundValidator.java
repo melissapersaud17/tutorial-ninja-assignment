@@ -33,6 +33,11 @@ public class LengthBoundValidator implements FieldValidator {
     }
 
     @Override
+    public boolean needsMaxLengthRemoved() {
+        return violationType == ViolationType.ABOVE_MAX;
+    }
+
+    @Override
     public String getExpectedError() {
         return displayName + " must be between " + min + " and " + max + " characters!";
     }

@@ -128,7 +128,7 @@ public class RegistrationSteps {
 
     @When("I submit the form with each field's invalid value")
     public void iSubmitTheFormWithEachFieldsInvalidValue() {
-        fieldValidators.forEach(v -> registrationWrapper.fillField(v.getFieldName(), v.getInvalidValue()));
+        fieldValidators.forEach(v -> registrationWrapper.fillField(v.getFieldName(), v.getInvalidValue(), v.needsMaxLengthRemoved()));
         registrationWrapper.submit();
     }
 

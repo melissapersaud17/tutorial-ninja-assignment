@@ -11,6 +11,10 @@ public interface FieldValidator {
 
     String getExpectedError();
 
+    default boolean needsMaxLengthRemoved() {
+        return false;
+    }
+
     default String getActualError(GenericFormWrapper<RegistrationForm> wrapper) {
         return wrapper.getText(wrapper.getForm().getErrors().get(getFieldName()));
     }
