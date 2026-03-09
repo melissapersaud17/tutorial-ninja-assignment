@@ -2,6 +2,7 @@ package com.tutorialninja.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class AccountSuccessPage extends BasePage {
 
@@ -9,6 +10,10 @@ public class AccountSuccessPage extends BasePage {
 
     public AccountSuccessPage(WebDriver driver) {
         super(driver);
+    }
+
+    public void waitUntilLoaded() {
+        wait.until(ExpectedConditions.urlContains("route=account/success"));
     }
 
     public String getHeadingText() {

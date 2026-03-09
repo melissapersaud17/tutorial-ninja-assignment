@@ -60,6 +60,7 @@ public class RegistrationSteps {
         ));
         registrationWrapper.click(registrationWrapper.getForm().getPrivacyPolicyCheckbox());
         registrationWrapper.submit();
+        accountSuccessPage.waitUntilLoaded();
         driver.manage().deleteAllCookies();
     }
 
@@ -95,6 +96,7 @@ public class RegistrationSteps {
     @When("I register again with the same details")
     public void iRegisterAgainWithTheSameDetails() {
         WebDriver driver = context.getDriver();
+        accountSuccessPage.waitUntilLoaded();
         driver.manage().deleteAllCookies();
         homePage.navigateToRegistration();
         registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());

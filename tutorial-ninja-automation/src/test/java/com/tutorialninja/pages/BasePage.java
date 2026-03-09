@@ -1,6 +1,7 @@
 package com.tutorialninja.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -27,7 +28,14 @@ public abstract class BasePage {
     }
 
     protected String getText(By locator) {
-        return findElement(locator).getText();
+        return wait.until(driver -> {
+            try {
+                WebElement el = driver.findElement(locator);
+                return el.isDisplayed() ? el.getText() : null;
+            } catch (StaleElementReferenceException e) {
+                return null;
+            }
+        });
     }
 
 }
