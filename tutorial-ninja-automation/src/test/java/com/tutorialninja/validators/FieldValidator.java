@@ -1,7 +1,7 @@
 package com.tutorialninja.validators;
 
+import com.tutorialninja.forms.FormPage;
 import com.tutorialninja.forms.GenericFormWrapper;
-import com.tutorialninja.forms.RegistrationForm;
 
 public interface FieldValidator {
 
@@ -15,7 +15,7 @@ public interface FieldValidator {
         return false;
     }
 
-    default String getActualError(GenericFormWrapper<RegistrationForm> wrapper) {
+    default String getActualError(GenericFormWrapper<? extends FormPage> wrapper) {
         return wrapper.getText(wrapper.getForm().getErrors().get(getFieldName()));
     }
 }
