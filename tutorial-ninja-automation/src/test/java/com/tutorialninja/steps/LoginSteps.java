@@ -1,6 +1,5 @@
 package com.tutorialninja.steps;
 
-import com.tutorialninja.config.Hooks;
 import com.tutorialninja.config.SharedContext;
 import com.tutorialninja.forms.GenericFormWrapper;
 import com.tutorialninja.forms.LoginForm;
@@ -17,13 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginSteps {
 
-    private final WebDriver driver = Hooks.getDriver();
+    private final SharedContext context;
     private GenericFormWrapper<LoginForm> loginWrapper;
-
     private MyAccountPage myAccountPage;
+
+    public LoginSteps(SharedContext context) {
+        this.context = context;
+    }
 
     @Given("I am on the login page")
     public void iAmOnTheLoginPage() {
+        WebDriver driver = context.getDriver();
         HomePage homePage = new HomePage(driver);
         loginWrapper = new GenericFormWrapper<>(driver, new LoginForm());
         myAccountPage = new MyAccountPage(driver);
@@ -33,8 +36,8 @@ public class LoginSteps {
     @When("I log in with the registered credentials")
     public void iLogInWithTheRegisteredCredentials() {
         loginWrapper.fillAllFields(Map.of(
-                "email", SharedContext.getRegisteredEmail(),
-                "password", SharedContext.getRegisteredPassword()
+                "email", context.getRegisteredEmail(),
+                "password", context.getRegisteredPassword()
         ));
     }
 

@@ -3,30 +3,32 @@ package com.tutorialninja.config;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
 
 public class Hooks {
-    private static WebDriver driver;
+
+    private final SharedContext context;
+
+    public Hooks(SharedContext context) {
+        this.context = context;
+    }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        ChromeDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // if Selenium can't find an element immediately, wait 10 seconds before failing.
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        context.setDriver(driver);
     }
 
     @After
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        if (context.getDriver() != null) {
+            context.getDriver().quit();
+            context.setDriver(null);
         }
-    }
-
-    public static WebDriver getDriver() {
-        return driver;
     }
 }

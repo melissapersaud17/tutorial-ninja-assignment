@@ -29,6 +29,9 @@ dependencies {
     // JUnit 5 Platform — needed to run Cucumber tests
     testImplementation 'org.junit.platform:junit-platform-suite:1.11.3'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
+
+    // PicoContainer — Cucumber DI for sharing state between step classes
+    testImplementation 'io.cucumber:cucumber-picocontainer:7.20.1'
 }
 
 test {

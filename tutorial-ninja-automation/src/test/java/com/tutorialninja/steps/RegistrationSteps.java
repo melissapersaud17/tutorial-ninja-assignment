@@ -1,6 +1,5 @@
 package com.tutorialninja.steps;
 
-import com.tutorialninja.config.Hooks;
 import com.tutorialninja.config.SharedContext;
 import com.tutorialninja.forms.GenericFormWrapper;
 import com.tutorialninja.forms.RegistrationForm;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegistrationSteps {
 
-    private final WebDriver driver = Hooks.getDriver();
+    private final SharedContext context;
     private GenericFormWrapper<RegistrationForm> registrationWrapper;
     private HomePage homePage;
     private AccountSuccessPage accountSuccessPage;
@@ -35,8 +34,13 @@ public class RegistrationSteps {
             new LengthBoundValidator("password", "Password", 4, 20, LengthBoundValidator.ViolationType.BELOW_MIN)
     );
 
+    public RegistrationSteps(SharedContext context) {
+        this.context = context;
+    }
+
     @Given("I have registered a new account")
     public void iHaveRegisteredANewAccount() {
+        WebDriver driver = context.getDriver();
         homePage = new HomePage(driver);
         registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());
         accountSuccessPage = new AccountSuccessPage(driver);
@@ -44,7 +48,7 @@ public class RegistrationSteps {
 
         String email = "testuser_" + System.currentTimeMillis() + "@test.com";
         String password = "Test1234";
-        SharedContext.setCredentials(email, password);
+        context.setCredentials(email, password);
 
         registrationWrapper.fillAllFields(Map.of(
                 "firstName", "John",
@@ -61,6 +65,7 @@ public class RegistrationSteps {
 
     @Given("I am on the registration page")
     public void iAmOnTheRegistrationPage() {
+        WebDriver driver = context.getDriver();
         homePage = new HomePage(driver);
         registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());
         accountSuccessPage = new AccountSuccessPage(driver);
@@ -89,6 +94,7 @@ public class RegistrationSteps {
 
     @When("I register again with the same details")
     public void iRegisterAgainWithTheSameDetails() {
+        WebDriver driver = context.getDriver();
         driver.manage().deleteAllCookies();
         homePage.navigateToRegistration();
         registrationWrapper = new GenericFormWrapper<>(driver, new RegistrationForm());
