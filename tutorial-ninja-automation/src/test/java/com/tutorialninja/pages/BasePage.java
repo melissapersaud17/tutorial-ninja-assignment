@@ -13,21 +13,9 @@ public abstract class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
 
-    private static final int SLOW_DOWN_MS = 1000;
-
     public BasePage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-    }
-
-    private void slowDown() {
-        if (SLOW_DOWN_MS > 0) {
-            try {
-                Thread.sleep(SLOW_DOWN_MS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 
     protected WebElement findElement(By locator) {
@@ -35,7 +23,6 @@ public abstract class BasePage {
     }
 
     protected void click(By locator) {
-        slowDown();
         findElement(locator).click();
     }
 
